@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SnapVid - ទាញយកវីដេអូ TikTok & YouTube ឥតគិតថ្លៃ</title>
+  <link href="https://fonts.googleapis.com/css2?family=Khmer&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      font-family: 'Poppins', 'Khmer', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .container {
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(15px);
+      border-radius: 25px;
+      padding: 40px 30px;
+      width: 100%;
+      max-width: 500px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+      border: 1px solid rgba(255,255,255,0.2);
+      text-align: center;
+    }
+    h1 {
+      font-size: 3.5rem;
+      background: linear-gradient(45deg, #ff006e, #ff8c00);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 10px;
+    }
+    p { color: #fff; font-size: 1.1rem; margin-bottom: 30px; }
+    input {
+      width: 100%;
+      padding: 18px;
+      border: none;
+      border-radius: 15px;
+      font-size: 1.1rem;
+      background: rgba(255,255,255,0.2);
+      color: white;
+      margin-bottom: 20px;
+    }
+    input::placeholder { color: #ddd; }
+    button {
+      width: 100%;
+      padding: 18px;
+      font-size: 1.3rem;
+      font-weight: bold;
+      background: linear-gradient(45deg, #ff006e, #ff8c00);
+      color: white;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      box-shadow: 0 10px 30px rgba(255,0,110,0.4);
+      transition: all 0.3s;
+    }
+    button:hover { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(255,0,110,0.6); }
+    .result { margin-top: 25px; }
+    .download-btn {
+      display: inline-block;
+      padding: 15px 30px;
+      background: #00ff88;
+      color: #000;
+      text-decoration: none;
+      border-radius: 50px;
+      font-weight: bold;
+      margin-top: 15px;
+    }
+    footer { margin-top: 40px; color: #fff8; font-size: 0.9rem; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>SnapVid</h1>
+    <p>ទាញយកវីដេអូ TikTok & YouTube<b> កម្រឹត1080HD· គុណភាពខ្ពស់ · ឥតគិតថ្លៃ 100%</p>
+
+    <input type="text" id="url" placeholder="បិទលីង TikTok ឬ YouTube នៅទីនេះ..." />
+
+    <button onclick="downloadVideo()">ទាញយកឥឡូវនេះ</button>
+
+    <div class="result" id="result"></div>
+
+    <footer>
+      © 2025 SnapVid • សម្រាប់ប្រើប្រាស់ផ្ទាល់ខ្លួនប៉ុណ្ណោះ
+    </footer>
+  </div>
+
+  <script>
+    async function downloadVideo() {
+      const url = document.getElementById("url").value.trim();
+      const resultDiv = document.getElementById("result");
+
+      if (!url) {
+        resultDiv.innerHTML = `<p style="color:#ff006e;">សូមបិទលីងជាមុនសិន!</p>`;
+        return;
+      }
+
+      resultDiv.innerHTML = `<p style="color:#fff;">កំពុងទាញយក... សូមរង់ចាំ 10-30 វិនាទី</p>`;
+
+      try {
+        const response = await fetch(`https://api.cobalt.tools/api/json`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "Accept": "application/json" },
+          body: JSON.stringify({
+            url: url,
+            isAudioOnly: false,
+            tiktokH264: true
+          })
+        });
+
+        const data = await response.json();
+
+        if (data.status === "success" && data.url) {
+          resultDiv.innerHTML = `
+            <p style="color:#00ff88; font-size:1.3rem;">ទាញយកជោគជ័យ!</p>
+            <a href="${data.url}" download class="download-btn" target="_blank">
+              ចុចទីនេះដើម្បីទាញយកវីដេអូ
+            </a>`;
+        } else {
+          resultDiv.innerHTML = `<p style="color:#ff006e;">មិនអាចទាញយកបាន។ សាកល្បងវីដេអូផ្សេងទៀត។</p>`;
+        }
+      } catch (e) {
+        resultDiv.innerHTML = `<p style="color:#ff006e;">មានបញ្ហា។ សូមព្យាយាមម្តងទៀត!</p>`;
+      }
+    }
+
+    // Enter key to download
+    document.getElementById("url").addEventListener("keypress", function(e) {
+      if (e.key === "Enter") downloadVideo();
+    });
+  </script>
+</body>
+</html>
